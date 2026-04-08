@@ -73,6 +73,19 @@ uv sync
 uv run src/main.py
 ```
 
+## 💬 Feedback and Bug Reports
+
+While this project has been confirmed to work on macOS 26.4 (25E246), behavior may vary depending on your OS version or hardware.
+
+Whether it works perfectly or you encounter issues, we would greatly appreciate your feedback via [Issues](https://github.com/masaoikawa/tkinter-macos-pinch/issues)! When reporting, please include the following information:
+
+- **macOS Version**
+- **Python Version**
+- **Device Used** (e.g., Trackpad, Magic Mouse, Third-party mouse)
+- **Specific Behavior** (e.g., Zoom is too fast, specific error occurs, worked as expected, etc.)
+
+Your feedback is invaluable in making this project more stable and useful for everyone.
+
 ## 📄 License
 This project is licensed under the **MIT License**.
 For more details, please see the [LICENSE](LICENSE) file.
