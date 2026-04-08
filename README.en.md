@@ -65,7 +65,7 @@ The program handles differences in physical devices and OS behaviors through the
 
 ```bash
 # Clone the repository
-git clone [https://github.com/masaoikawa/tkinter-macos-pinch.git](https://github.com/masaoikawa/tkinter-macos-pinch.git)
+git clone https://github.com/masaoikawa/tkinter-macos-pinch.git
 cd tkinter-macos-pinch
 
 # Install dependencies and run (when using uv)
