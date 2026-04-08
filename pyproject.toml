@@ -1,0 +1,10 @@
+[project]
+name = "tkinter-macos-pinch"
+version = "0.1.0"
+description = "Native macOS pinch-to-zoom support for Tkinter"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "Pillow>=10.0.0",
+    "pyobjc>=10.0",
+]
