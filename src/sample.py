@@ -83,7 +83,7 @@ class ImagePinchApp(tk.Tk):
 
         # マウスホイールイベント：OSによって挙動が異なるため振り分けます。
         if IS_WIN:
-            self.canvas.bind("<MouseWheel>", self._on_dispatch_windows) # Windows：通常のMouseWheelイベントで、Ctrl併用時は中心ズーム、Shift併用時は水平スクロール
+            self.canvas.bind("<MouseWheel>", self._on_dispatch) # Windows：通常のMouseWheelイベントで、Ctrl併用時は中心ズーム、Shift併用時は水平スクロール
         else:
             self.canvas.bind("<MouseWheel>", self._on_dispatch) # 2本指上下：スクロール移動、Command併用時は中心ズーム
             self.canvas.bind("<Shift-MouseWheel>", self._on_dispatch) # 2本指左右：水平方向へのスクロール移動
