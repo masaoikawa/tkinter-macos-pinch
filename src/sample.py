@@ -12,9 +12,15 @@ import sys
 import AppKit
 import queue
 
-# macOS Sequoia等で発生する IMKCFRunLoopWakeUpReliable エラーログが
-# コンソールを汚染するのを防ぐため、標準エラー出力を無効化します。
-if sys.platform == "darwin":
+# OS判定フラグ：環境に応じて処理を分岐させるために使用します。
+IS_MAC = sys.platform == "darwin"
+IS_WIN = sys.platform == "win32"
+
+# macOS専用の処理：Mac環境の場合のみ、ネイティブイベント取得用のライブラリを読み込みます。
+if IS_MAC:
+    # macOS Sequoia等で発生する IMKCFRunLoopWakeUpReliable エラーログが
+    # コンソールを汚染するのを防ぐため、標準エラー出力を無効化します。
+    import AppKit
     f = open(os.devnull, 'w')
     os.dup2(f.fileno(), sys.stderr.fileno())
 
@@ -48,10 +54,12 @@ class ImagePinchApp(tk.Tk):
         self._setup_ui()
         self._setup_events()
 
-        # Tkinter標準では捕捉できない「NSEventTypeMagnify」をAppKit経由で直接監視します。
-        self.pinch_monitor = AppKit.NSEvent.addLocalMonitorForEventsMatchingMask_handler_(1 << 30, native_pinch_handler)
-        self.protocol("WM_DELETE_WINDOW", self._on_closing) 
-        self._poll_pinch_queue()
+        # macOSの場合のみ：Tkinter標準では捕捉できない「NSEventTypeMagnify」をAppKit経由で直接監視します。
+        if IS_MAC:
+            # Tkinter標準では捕捉できない「NSEventTypeMagnify」をAppKit経由で直接監視します。
+            self.pinch_monitor = AppKit.NSEvent.addLocalMonitorForEventsMatchingMask_handler_(1 << 30, native_pinch_handler)
+            self.protocol("WM_DELETE_WINDOW", self._on_closing) 
+            self._poll_pinch_queue()
         
         # 起動直後の自動読み込み
         if default_image_path and os.path.exists(default_image_path):
@@ -73,8 +81,14 @@ class ImagePinchApp(tk.Tk):
         """macOS標準の各種操作（ドラッグ、スクロール、フォーカス）を定義します。"""
         self.canvas.bind("<ButtonPress-1>", lambda e: self.canvas.scan_mark(e.x, e.y)) # 左クリック：ドラッグ移動の起点に設定
         self.canvas.bind("<B1-Motion>", lambda e: self.canvas.scan_dragto(e.x, e.y, gain=1)) # 左ドラッグ：画像を掴んで自由に移動
-        self.canvas.bind("<MouseWheel>", self._on_dispatch) # 2本指上下：スクロール移動、Command併用時は中心ズーム
-        self.canvas.bind("<Shift-MouseWheel>", self._on_dispatch) # 2本指左右：水平方向へのスクロール移動
+
+        # マウスホイールイベント：OSによって挙動が異なるため振り分けます。
+        if IS_WIN:
+            self.canvas.bind("<MouseWheel>", self._on_dispatch_windows) # Windows：通常のMouseWheelイベントで、Ctrl併用時は中心ズーム、Shift併用時は水平スクロール
+        else:
+            self.canvas.bind("<MouseWheel>", self._on_dispatch) # 2本指上下：スクロール移動、Command併用時は中心ズーム
+            self.canvas.bind("<Shift-MouseWheel>", self._on_dispatch) # 2本指左右：水平方向へのスクロール移動
+
         self.canvas.bind("<Enter>", lambda e: self.canvas.focus_set()) # マウス進入：キー入力を有効化
 
     def _on_dispatch(self, event):
@@ -173,8 +187,8 @@ class ImagePinchApp(tk.Tk):
             pass
 
     def _on_closing(self):
-        """OSリソースを解放して安全に終了します。"""
-        if self.pinch_monitor:
+        """OSのリソース（Macのイベントモニター等）を適切に解放して安全に終了します。"""
+        if IS_MAC and self.pinch_monitor:
             AppKit.NSEvent.removeMonitor_(self.pinch_monitor)
         self.destroy()
 
