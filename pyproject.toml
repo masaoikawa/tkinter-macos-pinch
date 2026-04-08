@@ -6,5 +6,5 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "Pillow>=10.0.0",
-    "pyobjc>=10.0",
+    "pyobjc>=10.0; sys_platform == 'darwin'",
 ]
