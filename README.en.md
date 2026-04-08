@@ -58,7 +58,7 @@ The program handles differences in physical devices and OS behaviors through the
 ## 📦 Requirements
 
 - macOS (Intel / Apple Silicon) / Windows (Mouse operations only)
-- Python 3.10+
+- Python 3.13.12
 - Dependencies: `Pillow`, `pyobjc` (macOS only)
 
 ## ⚡ Quick Start
