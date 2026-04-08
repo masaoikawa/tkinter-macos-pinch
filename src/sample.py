@@ -9,7 +9,6 @@ from tkinter import filedialog
 from PIL import Image, ImageTk
 import os
 import sys
-import AppKit
 import queue
 
 # OS判定フラグ：環境に応じて処理を分岐させるために使用します。
