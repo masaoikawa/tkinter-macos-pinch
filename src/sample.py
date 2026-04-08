@@ -162,6 +162,10 @@ class ImagePinchApp(tk.Tk):
         if not self.orig_img: return
         self.update_idletasks()
         cw, ch = self.canvas.winfo_width(), self.canvas.winfo_height()
+        # もしサイズがまだ取得できていない（1以下）場合は、少し待って再試行する
+        if cw <= 1:
+            self.after(100, self.reset_view)
+            return
         iw, ih = self.orig_img.size
         
         self.zoom_level = min(cw / iw, ch / ih) * 0.9
